@@ -1,9 +1,12 @@
 from django.db import models
 from user.models import User
+from django.contrib.postgres.fields import ArrayField
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
+    category = models.CharField(max_length=159)
+    tags = ArrayField(models.CharField(max_length=50), blank=True, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     publication_date = models.DateTimeField(auto_now_add=True)
     file = models.CharField(max_length=255)

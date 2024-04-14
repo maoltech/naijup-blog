@@ -164,3 +164,12 @@ class PostBookmarkView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except PostBookmark.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+class LatestPostByCategoryView(APIView):
+    def get(self, request, category):
+        try:
+            latest_posts = BlogPost.objects.filter(category=category).order_by('-publication_date')[:5]  # Get latest 5 posts by category
+            serializer = BlogPostSerializer(latest_posts, many=True)
+            return Response(serializer.data)
+        except BlogPost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)

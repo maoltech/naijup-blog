@@ -7,7 +7,7 @@ from .models import PostBookmark
 class BlogPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogPost
-        fields = ['id', 'title', 'content', 'publication_date', 'file']
+        fields = ['id', 'title', 'content', 'publication_date', 'file', 'category', 'tags']
         read_only_fields = ['publication_date']
 
 class CommentSerializer(serializers.ModelSerializer):
