@@ -5,8 +5,18 @@ from rest_framework.permissions import IsAuthenticated
 from .models import BlogPost, Comment, Like, PostBookmark
 from .serializers import BlogPostSerializer, CommentSerializer, LikeSerializer, PostBookmarkSerializer
 from rest_framework.pagination import PageNumberPagination
+# import requests
 
 class BlogPostController(APIView):
+
+    def get(self, request):
+        try:
+            post = BlogPost.objects.get()
+            serializer = BlogPostSerializer(post)
+            return Response(serializer.data)
+        except BlogPost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -173,3 +183,6 @@ class LatestPostByCategoryView(APIView):
             return Response(serializer.data)
         except BlogPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+# class LiveMarkets(models.Model):
+#     def get(self, request):
