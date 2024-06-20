@@ -4,8 +4,9 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     bio = models.TextField(blank=True)
-    image = models.CharField(max_length=255)
-
+    profile_picture = models.CharField(max_length=255)
+    is_author = models.BooleanField(default=False)
+    
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='custom_user_set',

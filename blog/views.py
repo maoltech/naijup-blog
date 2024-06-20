@@ -20,6 +20,8 @@ class BlogPostController(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        if not request.user.is_author:
+            raise PermissionError("You do not have permission to create blog posts.")
         serializer = BlogPostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)
