@@ -1,5 +1,5 @@
 venv/
-env/
+.env/
 *.pyc
 __pycache__/
 db.sqlite3
@@ -8,4 +8,4 @@ media/
 static/
 */migrations/*.py
 */migrations/*.pyc
-
+.env
