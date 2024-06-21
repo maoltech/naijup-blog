@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import BlogPost, Comment, Like, PostBookmark
 from .serializers import BlogPostSerializer, CommentSerializer, LikeSerializer, PostBookmarkSerializer
 from rest_framework.pagination import PageNumberPagination
+from rest_framework_simplejwt.authentication import JWTAuthentication
 # import requests
 
 class BlogPostController(APIView):
@@ -17,6 +18,7 @@ class BlogPostController(APIView):
         except BlogPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
