@@ -181,10 +181,14 @@ class PostBookmarkView(APIView):
         
 class LatestPostByCategoryView(APIView):
     def get(self, request, category):
+        paginator = LatestBlogPostPagination()
         try:
             latest_posts = BlogPost.objects.filter(category=category).order_by('-publication_date')[:5]  # Get latest 5 posts by category
-            serializer = BlogPostSerializer(latest_posts, many=True)
-            return Response(serializer.data)
+            result_page = paginator.paginate_queryset(latest_posts, request)
+            serializer = BlogPostSerializer(result_page, many=True)
+            return paginator.get_paginated_response(serializer.data)
+            # serializer = BlogPostSerializer(latest_posts, many=True)
+            # return Response(serializer.data)
         except BlogPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
