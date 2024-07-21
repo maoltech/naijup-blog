@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import BlogPostController, MyBlogPostController, LatestBlogPostView, CommentDetailView, CommentListView, LikeDetailView, LikeListView, PostBookmarkView, LatestPostByCategoryView 
+from .views import BlogPostController, BlogPostByTitleView, MyBlogPostController, LatestBlogPostView, CommentDetailView, CommentListView, LikeDetailView, LikeListView, PostBookmarkView, LatestPostByCategoryView 
 
 urlpatterns = [
     path('', BlogPostController.as_view(), name='blog_post_list'),
@@ -13,4 +13,5 @@ urlpatterns = [
     path('<int:post_id>/likes/<int:like_id>/', LikeDetailView.as_view(), name='like_detail'),
     path('bookmarks/', PostBookmarkView.as_view(), name='post_bookmark_list'),
     path('bookmarks/<int:bookmark_id>/', PostBookmarkView.as_view(), name='post_bookmark_detail'),
+    path('post/title/<str:title>/', BlogPostByTitleView.as_view(), name='blog_post_by_title')
 ]

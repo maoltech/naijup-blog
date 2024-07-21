@@ -1,11 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
-    bio = models.TextField(blank=True)
+    bio = models.JSONField(default=list)
     profile_picture = models.CharField(max_length=255)
     is_author = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     groups = models.ManyToManyField(
         'auth.Group',

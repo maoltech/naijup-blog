@@ -38,6 +38,15 @@ class BlogPostController(APIView):
         except BlogPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+class BlogPostByTitleView(APIView):
+    def get(self, request, title):
+        try:
+            post = BlogPost.objects.get(title=title)
+            serializer = BlogPostSerializer(post)
+            return Response(serializer.data)
+        except BlogPost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
 class MyBlogPostController(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
