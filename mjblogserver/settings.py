@@ -94,12 +94,31 @@ WSGI_APPLICATION = 'mjblogserver.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+DATABASE_ENGINE = config('DATABASE_ENGINE', default='django.db.backends.sqlite3')
+DATABASE_NAME = config('DATABASE_NAME', default=str(BASE_DIR / 'db.sqlite3'))
+DATABASE_USER = config('DATABASE_USER', default='')
+DATABASE_PASSWORD = config('DATABASE_PASSWORD', default='')
+DATABASE_HOST = config('DATABASE_HOST', default='localhost')
+DATABASE_PORT = config('DATABASE_PORT', default='3306')
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': DATABASE_ENGINE,
+        'NAME': DATABASE_NAME,
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': DATABASE_HOST,
+        'PORT': DATABASE_PORT,
     }
 }
+
 CORS_ALLOW_ALL_ORIGINS = True
 
 
