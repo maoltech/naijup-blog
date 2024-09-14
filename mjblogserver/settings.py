@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-wlf-wceoo@g8^(!wrciz0ep=s(x7@04ii)+ea9-8)j03+g)5s_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
