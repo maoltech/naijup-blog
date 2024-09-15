@@ -6,30 +6,28 @@ from .models import BlogPost, Comment, Like, PostBookmark
 from .serializers import BlogPostSerializer, CommentSerializer, LikeSerializer, PostBookmarkSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework_simplejwt.authentication import JWTAuthentication
-# import requests
-
 class BlogPostController(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
+            # if not request.user.is_author:
+            #  raise PermissionError("You do not have permission to create blog posts.")
             post = BlogPost.objects.get()
             serializer = BlogPostSerializer(post)
             return Response(serializer.data)
         except BlogPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
     def post(self, request):
-        if not request.user.is_author:
-            raise PermissionError("You do not have permission to create blog posts.")
         serializer = BlogPostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
     def get(self, request, post_id):
         try:
             post = BlogPost.objects.get(pk=post_id, author=request.user)

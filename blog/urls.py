@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import BlogPostController, BlogPostByTitleView, MyBlogPostController, LatestBlogPostView, CommentDetailView, CommentListView, LikeDetailView, LikeListView, PostBookmarkView, LatestPostByCategoryView 
+from .views import BlogPostController, BlogPostByTitleView, MyBlogPostController, LatestBlogPostView, CommentDetailView, CommentListView, LikeDetailView, LikeListView, PostBookmarkView, LatestPostByCategoryView
 
 urlpatterns = [
-    path('', BlogPostController.as_view(), name='blog_post_list'),
+    path('', BlogPostController.as_view(), name='blog_post'),
     path('<int:post_id>/', BlogPostController.as_view(), name='blog_post_detail'),
     path('my-posts/', MyBlogPostController.as_view(), name='my_blog_posts'),
     path('latest-posts/', LatestBlogPostView.as_view(), name='latest_blog_posts'),
