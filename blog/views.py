@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import BlogPost, Comment, Like, PostBookmark
 from .serializers import BlogPostSerializer, CommentSerializer, LikeSerializer, PostBookmarkSerializer
 from rest_framework.pagination import PageNumberPagination
@@ -13,8 +13,6 @@ class BlogPostController(APIView):
 
     def get(self, request):
         try:
-            # if not request.user.is_author:
-            #  raise PermissionError("You do not have permission to create blog posts.")
             post = BlogPost.objects.get()
             serializer = BlogPostSerializer(post)
             return Response(serializer.data)
@@ -23,6 +21,8 @@ class BlogPostController(APIView):
         
     def post(self, request):
         serializer = BlogPostSerializer(data=request.data)
+        if not request.user.is_author:
+             raise PermissionError("You do not have permission to create blog posts.")
         if serializer.is_valid():
             serializer.save(author=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -35,8 +35,9 @@ class BlogPostController(APIView):
             return Response(serializer.data)
         except BlogPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
+from urllib.parse import unquote
 class BlogPostByTitleView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request, title):
         try:
             post = BlogPost.objects.get(title=title)
@@ -78,6 +79,7 @@ class LatestBlogPostPagination(PageNumberPagination):
 
 class LatestBlogPostView(APIView):
     pagination_class = LatestBlogPostPagination
+    permission_classes = [AllowAny]
 
     def get(self, request):
         paginator = self.pagination_class()
@@ -87,8 +89,14 @@ class LatestBlogPostView(APIView):
         return paginator.get_paginated_response(serializer.data)
     
 class CommentListView(APIView):
-    permission_classes = [IsAuthenticated]
-
+    def post(self, request, post_id):
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(author=request.user, post_id=post_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    permission_classes = [AllowAny]
     def get(self, request, post_id):
         try:
             comments = Comment.objects.filter(post_id=post_id)
@@ -97,12 +105,6 @@ class CommentListView(APIView):
         except BlogPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def post(self, request, post_id):
-        serializer = CommentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(author=request.user, post_id=post_id)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CommentDetailView(APIView):
@@ -136,13 +138,7 @@ class CommentDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
 class LikeListView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, post_id):
-        likes = Like.objects.filter(post_id=post_id)
-        serializer = LikeSerializer(likes, many=True)
-        return Response(serializer.data)
-
+    
     def post(self, request, post_id):
         like_data = {'post': post_id, 'user': request.user.id}
         serializer = LikeSerializer(data=like_data)
@@ -150,6 +146,14 @@ class LikeListView(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, post_id):
+        likes = Like.objects.filter(post_id=post_id)
+        serializer = LikeSerializer(likes, many=True)
+        return Response(serializer.data)
+
 
 
 class LikeDetailView(APIView):
@@ -187,6 +191,7 @@ class PostBookmarkView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
 class LatestPostByCategoryView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request, category):
         paginator = LatestBlogPostPagination()
         try:

@@ -5,27 +5,27 @@ import json
 class BlogPost(models.Model):
     title = models.CharField(max_length=255)
     content = models.JSONField()
-    description = models.TextField()
     category = models.CharField(max_length=159, default='General')
-    tags = models.TextField(default=json.dumps([]), blank=True)
+    # tags = models.TextField(default=json.dumps([]), blank=True)
+    tags = models.JSONField()
     author = models.ForeignKey(User, related_name="posts", on_delete=models.CASCADE)
     publication_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
     file = models.CharField(max_length=255)
-    image_links = models.JSONField(default=list)
+    image_links = models.CharField(max_length=255)
 
-    def set_tags(self, tags):
-        if not isinstance(tags, list):
-            raise ValidationError('Expected a list of strings')
-        self.tags = json.dumps(tags)
+    # def set_tags(self, tags):
+    #     if not isinstance(tags, list):
+    #         raise ValidationError('Expected a list of strings')
+    #     self.tags = json.dumps(tags)
 
-    def get_tags(self):
-        return json.loads(self.tags)
+    # def get_tags(self):
+    #     return json.loads(self.tags)
 
-    def save(self, *args, **kwargs):
-        if isinstance(self.tags, list):
-            self.tags = json.dumps(self.tags)
-        super(BlogPost, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if isinstance(self.tags, list):
+    #         self.tags = json.dumps(self.tags)
+    #     super(BlogPost, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.title

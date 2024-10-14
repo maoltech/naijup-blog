@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from rest_framework import status
 from django.conf import settings
 import cloudinary.uploader
@@ -7,6 +8,7 @@ import cloudinary.uploader
 from .serializers import MediaUploadSerializer
 
 class MediaUploadView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         serializer = MediaUploadSerializer(data=request.data)
         if serializer.is_valid():
@@ -16,7 +18,7 @@ class MediaUploadView(APIView):
             if file_type.startswith('image'):
                 folder = 'image'
             elif file_type == 'application/pdf':
-                folder = 'pdf'
+                folder = 'pdf'  
             elif file_type.startswith('video'):
                 folder = 'video'
             else:
