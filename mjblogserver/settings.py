@@ -141,6 +141,8 @@ DATABASES = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ["https://naijup-blog-1.onrender.com"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Password validation
