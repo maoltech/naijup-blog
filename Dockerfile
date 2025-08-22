@@ -24,7 +24,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose Django port
-EXPOSE 8000
+EXPOSE 2001
 
 # Run start.sh
 CMD ["sh", "./bin/start.sh"]
