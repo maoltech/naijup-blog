@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  web:
+    build: .
+    container_name: django-api
+    command: ["sh", "./bin/start.sh"]
+    volumes:
+      - .:/app
+    ports:
+      - "8000:2001"
+    env_file:
+      - .env

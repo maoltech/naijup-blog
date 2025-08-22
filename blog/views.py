@@ -6,6 +6,8 @@ from .models import BlogPost, Comment, Like, PostBookmark
 from .serializers import BlogPostSerializer, CommentSerializer, LikeSerializer, PostBookmarkSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.core.cache import cache
+from urllib.parse import unquote
 class BlogPostController(APIView):
 
     authentication_classes = [JWTAuthentication]
@@ -35,14 +37,29 @@ class BlogPostController(APIView):
             return Response(serializer.data)
         except BlogPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-from urllib.parse import unquote
 class BlogPostByTitleView(APIView):
     permission_classes = [AllowAny]
     def get(self, request, title):
         try:
+            # Decode URL-encoded title
+            decoded_title = unquote(title)
+            
+            # Generate cache key
+            cache_key = f"blogpost_title_{decoded_title}"
+            
+            # Try to get from cache first
+            cached_post = cache.get(cache_key)
+
+            if cached_post:
+                # Return cached data
+                return Response(cached_post)
             post = BlogPost.objects.get(title=title)
             serializer = BlogPostSerializer(post)
-            return Response(serializer.data)
+            serialized_data = serializer.data
+            
+            # Store in Redis cache for 4 hours (14400 seconds)
+            cache.set(cache_key, serialized_data, timeout=14400)
+            return Response(serialized_data)
         except BlogPost.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         

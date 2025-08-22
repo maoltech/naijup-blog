@@ -121,7 +121,8 @@ DATABASE_NAME = config('DATABASE_NAME', default=str(BASE_DIR / 'db.sqlite3'))
 DATABASE_USER = config('DATABASE_USER', default='')
 DATABASE_PASSWORD = config('DATABASE_PASSWORD', default='')
 DATABASE_HOST = config('DATABASE_HOST', default='localhost')
-DATABASE_PORT = config('DATABASE_PORT', default='3306')
+DATABASE_PORT = config('DATABASE_PORT', default='3309')
+REDIS_URL = config('REDIS_URL', default='redis://')
 
 # DATABASES = {
 #     'default': {
@@ -139,6 +140,20 @@ DATABASES = {
         'PORT': DATABASE_PORT,
     }
 }
+
+# settings.py
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": REDIS_URL,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# Cache timeout (4 hours = 14400 seconds)
+CACHE_TTL = 60 * 60 * 4
 
 CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ["https://naijup-blog-1.onrender.com"]
